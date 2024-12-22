@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home page</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f9f9f9;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .container {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        max-width: 400px;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      h1 {
+        color: #4caf50;
+        margin-bottom: 1rem;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      input[type="url"] {
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      input[type="url"]:focus {
+        border-color: #4caf50;
+        outline: none;
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+      }
+
+      button {
+        padding: 0.8rem;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      .short-url {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background-color: #f4f4f4;
+        border: 1px dashed #ddd;
+        border-radius: 5px;
+        word-wrap: break-word;
+        font-size: medium;
+        font-weight: 800;
+      }
+
+      .short-url a {
+        color: #4caf50;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .short-url a:hover {
+        text-decoration: underline;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 2rem;
+        background-color: #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      table th,
+      table td {
+        padding: 1rem;
+        border: 1px solid #ccc;
+        text-align: left;
+      }
+      table th {
+        background-color: #4caf50;
+        color: #fff;
+      }
+      table td {
+        background-color: #f9f9f9;
+      }
+
+      .back-button {
+        margin-top: 2rem;
+        padding: 0.8rem 2rem;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .back-button:hover {
+        background-color: #45a049;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>URL Shortener</h1>
+      <form id="urlForm" method="post" action="/url">
+        <input
+          type="url"
+          placeholder="Enter your long URL"
+          required
+          id="longUrl"
+          name="url"
+        />
+        <button type="submit">Shorten URL</button>
+      </form>
+      <div id="shortUrlContainer" class="short-url">
+        Shortened URL: <% if(locals.id){%>
+        <a id="shortUrl" href="#">http://localhost:8001/url/<%=id%></a>
+        <%}%>
+      </div>
+    </div>
+    <!-- <button
+      class="back-button"
+      id="backButton"
+      onclick="window.location.href='/'"
+    >
+      Go Back to Home
+    </button> -->
+    <div>
+      <% if(locals.urls){%>
+      <table id="analyticsTable">
+        <thead>
+          <th>Ser.No.</th>
+          <th>Shortened URL</th>
+          <th>Original URL</th>
+          <th>Visit Count</th>
+        </thead>
+        <tbody>
+          <% urls.forEach((url,index) => { %>
+          <tr>
+            <td><%= index+1 %></td>
+            <td><%= url.shortId %></td>
+            <td><%= url.redirectUrl %></td>
+            <td><%= url.visitHistory.length %></td>
+          </tr>
+
+          <% }) %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+    <script>
+      document
+        .getElementById("shortUrl")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          const shortUrl = e.target.textContent;
+          navigator.clipboard
+            .writeText(shortUrl)
+            .then(() => {
+              alert("Shortend URL copied to clipboard!");
+            })
+            .catch((err) => {
+              console.log("Failed to copy:", err);
+            });
+        });
+    </script>
+  </body>
+</html>
